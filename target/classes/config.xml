@@ -1,0 +1,32 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+ 
+	<bean id="customerService" class="com.mkyong.customer.services.CustomerService" />
+ 
+	<bean id="CAMAroundMethodBeanAdvice" class="com.mkyong.aop.HijackAroundMethod" />
+ 
+	<bean id="CAMServiceProxy" 
+                class="org.springframework.aop.framework.ProxyFactoryBean">
+ 
+		<property name="target" ref="customerService" />
+ 
+		<property name="interceptorNames">
+			<list>
+				<value>CAMAdvisor</value>
+			</list>
+		</property>
+	</bean>
+ 
+	<bean id="CAMPointcut" 
+                class="org.springframework.aop.support.NameMatchMethodPointcut">
+		<property name="mappedName" value="computing" />
+	</bean>
+ 
+	<bean id="CAMAdvisor" 
+                 class="org.springframework.aop.support.DefaultPointcutAdvisor">
+		<property name="pointcut" ref="CAMPointcut" />
+		<property name="advice" ref="CAMAroundMethodBeanAdvice" />
+	</bean>
+</beans>
