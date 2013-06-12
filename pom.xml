@@ -5,7 +5,7 @@
 	<artifactId>CAM</artifactId>
 	<version>0.0.5</version>
 	<packaging>jar</packaging>
-	<name>Component Adaptation Managment</name>
+	<name>Component Adaptation Management</name>
 	<dependencies>
 		<dependency>
 			<groupId>com.google.android</groupId>

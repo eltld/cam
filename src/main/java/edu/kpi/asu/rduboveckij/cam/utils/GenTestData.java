@@ -73,12 +73,9 @@ public class GenTestData {
 	 * @return r1 or r2 or r3
 	 */
 	public static int checkRule(int min, int max, int i, int r1, int r2, int r3) {
-		if (i <= min)
-			return r1;
-		else if (i > min && i < max)
-			return r3;
-		else if (i >= max)
-			return r3;
+		if (i <= min) return r1;
+		else if (i > min && i < max) return r3;
+		else if (i >= max) return r3;
 		return 0;
 	}
 
