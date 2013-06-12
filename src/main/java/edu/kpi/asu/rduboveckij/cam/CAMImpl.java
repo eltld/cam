@@ -55,7 +55,9 @@ public class CAMImpl implements CAM {
 	}
 
 	public void saveCurrentLogTime() {
-		this.saveLogTime((System.currentTimeMillis() - start_time) / 1000);
+		long worktime = (System.currentTimeMillis() - start_time) / 1000;
+		Log.i("CAM->saveCurrenLogTime", "" + worktime);
+		this.saveLogTime(worktime);
 	}
 
 	public void printLogTime() {

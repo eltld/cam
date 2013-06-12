@@ -5,6 +5,12 @@ import static edu.kpi.asu.rduboveckij.cam.utils.CommonUtils.sqr;
 import java.util.Arrays;
 
 public final class Tukey {
+	/**
+	 * calc Tukey method for find weighted avg
+	 * 
+	 * @param x Array time
+	 * @return weighted avg
+	 */
 	public static double apply(double[] x) {
 		Arrays.sort(x);
 		final int len = x.length;

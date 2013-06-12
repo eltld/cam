@@ -1,6 +1,8 @@
 package edu.kpi.asu.rduboveckij.cam.math;
 
-
+/**
+ * Use Command pattern
+ */
 public interface Metric {
-	public double apply(double[] vk, double[] vInput);
+	public double apply(double[] a, double[] b);
 }

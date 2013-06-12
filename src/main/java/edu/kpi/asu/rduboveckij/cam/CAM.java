@@ -4,4 +4,6 @@ import android.app.Activity;
 
 public interface CAM {
 	public boolean isOnClient(Activity activity);
+	
+	public void saveCurrentLogTime();
 }

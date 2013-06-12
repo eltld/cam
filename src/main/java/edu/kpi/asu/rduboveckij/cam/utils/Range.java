@@ -3,6 +3,13 @@ package edu.kpi.asu.rduboveckij.cam.utils;
 import java.util.Iterator;
 
 public class Range {
+	/**
+	 * Range generator
+	 * @param start value
+	 * @param stop value
+	 * @param step value
+	 * @return collection integer from start to stop with step
+	 */
 	public static Iterable<Integer> range(final int start, final int stop,
 			final int step) {
 		if (step <= 0)
@@ -31,11 +38,22 @@ public class Range {
 			}
 		};
 	}
-
+	
+	/**
+	 * Range generator with default step 1
+	 * @param start
+	 * @param stop
+	 * @return collection integer from start to stop with step 1
+	 */
 	public static Iterable<Integer> range(final int start, final int stop) {
 		return range(start, stop, 1);
 	}
 
+	/**
+	 * Range generator with default step 1 and start 0
+	 * @param stop
+	 * @return collection integer from 0 to stop with step 1
+	 */
 	public static Iterable<Integer> range(final int stop) {
 		return range(0, stop, 1);
 	}

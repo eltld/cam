@@ -19,6 +19,12 @@ class SystemUtils {
 		return readSystemFileAsInt(CPUFREQ_PATH + "cpuinfo_max_freq");
 	}
 
+	/**
+	 * Need for read System Log file in Android
+	 * @param pSystemFile
+	 * @return finding property value
+	 * @throws Exception
+	 */
 	private static int readSystemFileAsInt(final String pSystemFile)
 			throws Exception {
 		InputStream in = null;
@@ -34,6 +40,12 @@ class SystemUtils {
 		}
 	}
 
+	/**
+	 * Convert InputStream to String
+	 * @param pInputStream
+	 * @return read String for all stream
+	 * @throws IOException
+	 */
 	public static final String readFully(final InputStream pInputStream)
 			throws IOException {
 		final StringBuilder sb = new StringBuilder();

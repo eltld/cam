@@ -6,6 +6,10 @@ import com.sleepycat.je.DatabaseException;
 import com.sleepycat.je.Transaction;
 import com.sleepycat.persist.PrimaryIndex;
 
+/**
+ * Use Data Access Object pattern
+ * @param <T> extends DomeinWithId<Long>
+ */
 public abstract class Da<T extends DomeinWithId<Long>> {
 	private PrimaryIndex<Long, T> index;
 
@@ -19,11 +23,20 @@ public abstract class Da<T extends DomeinWithId<Long>> {
 
 	public abstract void save(T item);
 
+	/**
+	 * Save many items
+	 * @param items extends DomeinWithId<Long>
+	 */
 	public void saveAll(T... items) {
 		for (T item : items)
 			save(item);
 	}
 
+	/**
+	 * Save one item
+	 * @param item extends DomeinWithId<Long>
+	 * @param sequence_name need for auto_incremant
+	 */
 	protected void save(T item, String sequence_name) {
 		Transaction tx = dbConfig.startTransaction();
 		try {
@@ -43,14 +56,27 @@ public abstract class Da<T extends DomeinWithId<Long>> {
 		}
 	}
 
+	/**
+	 * Find one
+	 * @param id
+	 * @return Item
+	 */
 	public T find(Long id) {
 		return index.get(id);
 	}
 
+	/**
+	 * Find All
+	 * @return Map Items with id
+	 */
 	public Map<Long, T> findAll() {
 		return index.map();
 	}
 
+	/**
+	 * Remove one Items
+	 * @param id
+	 */
 	public void remove(Long id) {
 		try {
 			index.delete(id);
