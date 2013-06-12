@@ -17,8 +17,6 @@ public class DatabaseConfig {
 	private Environment envmnt;
 	private EntityStore store;
 
-	public static boolean isEmpty;
-
 	public static DatabaseConfig getInstance() {
 		if (ourInstance == null)
 			throw new IllegalArgumentException(
@@ -27,13 +25,11 @@ public class DatabaseConfig {
 	}
 
 	public static void init(File envDir) {
-		envDir = new File(envDir, "autoexpence");
 		if (!envDir.exists()) {
 			if (!envDir.mkdirs()) {
 				Log.e("TravellerLog :: ", "Problem creating folder");
 			}
 		}
-		isEmpty = envDir.list().length == 0;
 		ourInstance = new DatabaseConfig(envDir);
 	}
 

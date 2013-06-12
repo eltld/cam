@@ -1,6 +1,7 @@
 package edu.kpi.asu.rduboveckij.cam.db;
 
-import java.util.List;
+import java.util.Collection;
+import java.util.Iterator;
 
 import edu.kpi.asu.rduboveckij.cam.utils.Da;
 
@@ -16,10 +17,12 @@ public class LogTimeDA extends Da<LogTime> {
 	}
 
 	public double[] getLogTimes() {
-		final List<LogTime> items = (List<LogTime>) this.findAll().values();
+		final Collection<LogTime> items = this.findAll().values();
 		double[] result = new double[items.size() - 1];
-		for (int i = 0; i < result.length; i++)
-			result[i] = items.get(i).getTime();
+		int i = 0;
+		for (Iterator<LogTime> iterator = items.iterator(); iterator.hasNext(); i++) {
+			result[i] = iterator.next().getTime();
+		}
 		return result;
 	}
 

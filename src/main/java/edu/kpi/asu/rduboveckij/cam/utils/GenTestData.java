@@ -4,6 +4,8 @@ import static edu.kpi.asu.rduboveckij.cam.utils.CommonUtils.randomBool;
 
 import java.io.File;
 
+import android.util.Log;
+
 import edu.kpi.asu.rduboveckij.cam.db.LogTime;
 import edu.kpi.asu.rduboveckij.cam.db.LogTimeDA;
 import edu.kpi.asu.rduboveckij.cam.db.Precedent;
@@ -20,11 +22,15 @@ public class GenTestData {
 	}
 
 	public void genLogTime(int count) {
+		Log.i("CAM->GenTestData", "Start LogTime");
 		for (int i : Range.range(0, count))
 			ltDa.save(new LogTime(Math.random() + 0.5));
+		Log.i("CAM->GenTestData size=", count + "");
 	}
 
 	public void genPrecedent(int stepC, int stepM, int stepE) {
+		Log.i("CAM->GenTestData", "Start Precedent");
+		int i = 0;
 		for (int ic : Range.range(0, 100, stepC)) {
 			int resultC = checkRule(25, 75, ic, 2, randomBool(), -2);
 			for (int im : Range.range(50, 100, stepM)) {
@@ -32,11 +38,15 @@ public class GenTestData {
 				for (int ie : Range.range(0, 100, stepE)) {
 					int result = resultM + resultC
 							+ checkRule(25, 75, ie, -3, randomBool(), 1);
-					prDa.save(new Precedent(result >= 0 ? 1.0 : 0.0,
-							ic / 100.0, im / 100.0, ie / 100.0));
+					Precedent pr = new Precedent(result >= 0 ? 1.0 : 0.0,
+							ic / 100.0, im / 100.0, ie / 100.0);
+					prDa.save(pr);
+					Log.i("CAM->GenTestData", pr.toString());
+					i++;
 				}
 			}
 		}
+		Log.i("CAM->GenTestData size=", i + "");
 	}
 
 	public static int checkRule(int min, int max, int i, int r1, int r2, int r3) {
