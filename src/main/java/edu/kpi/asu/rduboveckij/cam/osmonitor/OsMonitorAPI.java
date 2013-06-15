@@ -59,7 +59,8 @@ public class OsMonitorAPI implements IOsMonitorAPI {
 	}
 
 	public int getMemoryLoad() {
-		return (int) ((getTotalMemory() - getFreeMemory()) / getTotalMemory() * 100);
+		return (int) ((double) (getTotalMemory() - getFreeMemory())
+				/ getTotalMemory() * 100);
 	}
 
 	public int getEnergyLevel() {

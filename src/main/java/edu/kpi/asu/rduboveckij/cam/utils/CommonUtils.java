@@ -5,6 +5,7 @@ import java.util.Collection;
 import android.util.Log;
 
 public class CommonUtils {
+	public static final double NanoToSecond = 1000000000.0;
 	/**
 	 * Pow with default param 
 	 * @param x

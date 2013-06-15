@@ -6,6 +6,7 @@ import java.io.File;
 
 import android.util.Log;
 
+import edu.kpi.asu.rduboveckij.cam.CAMImpl;
 import edu.kpi.asu.rduboveckij.cam.db.LogTime;
 import edu.kpi.asu.rduboveckij.cam.db.LogTimeDA;
 import edu.kpi.asu.rduboveckij.cam.db.Precedent;
@@ -15,14 +16,23 @@ public class GenTestData {
 	private PrecedentDA prDa;
 	private LogTimeDA ltDa;
 
+	public GenTestData() {
+		DatabaseConfig.init(CAMImpl.pathDb);
+		prDa = new PrecedentDA();
+		ltDa = new LogTimeDA();
+	}
+
 	public GenTestData(File path) {
 		DatabaseConfig.init(path);
 		prDa = new PrecedentDA();
 		ltDa = new LogTimeDA();
 	}
+
 	/**
 	 * Generation random [0.5, 1.5] time
-	 * @param count of LogTime size
+	 * 
+	 * @param count
+	 *            of LogTime size
 	 */
 	public void genLogTime(int count) {
 		Log.i("CAM->GenTestData", "Start LogTime");
@@ -30,16 +40,20 @@ public class GenTestData {
 			ltDa.save(new LogTime(Math.random() + 0.5));
 		Log.i("CAM->GenTestData size=", count + "");
 	}
+
 	/**
-	 * Generation random Precedent
-	 * rule generation this rule for test data generation 
-	 * if all rule >=0? 1: 0 
-	 * @param stepC CPU load step in interval [0,100]
-	 * rule generation: [25, 75]; 2, random, -2
-	 * @param stepM Memory load step in interval [50,100]
-	 * rule generation: [70, 90]; 1, random * 2, -2
-	 * @param stepE Energy level step in interval [0,100]
-	 * rule generation: [25, 75]; -3, random, 1
+	 * Generation random Precedent rule generation this rule for test data
+	 * generation if all rule >=0? 1: 0
+	 * 
+	 * @param stepC
+	 *            CPU load step in interval [0,100] rule generation: [25, 75];
+	 *            2, random, -2
+	 * @param stepM
+	 *            Memory load step in interval [50,100] rule generation: [70,
+	 *            90]; 1, random * 2, -2
+	 * @param stepE
+	 *            Energy level step in interval [0,100] rule generation: [25,
+	 *            75]; -3, random, 1
 	 */
 	public void genPrecedent(int stepC, int stepM, int stepE) {
 		Log.i("CAM->GenTestData", "Start Precedent");
@@ -61,21 +75,31 @@ public class GenTestData {
 		}
 		Log.i("CAM->GenTestData size=", i + "");
 	}
-	
+
 	/**
 	 * Rule generation
-	 * @param min limit
-	 * @param max limit
-	 * @param i current index
-	 * @param r1 if in min limit
-	 * @param r2 if in min and max limit
-	 * @param r3 if in max limit
+	 * 
+	 * @param min
+	 *            limit
+	 * @param max
+	 *            limit
+	 * @param i
+	 *            current index
+	 * @param r1
+	 *            if in min limit
+	 * @param r2
+	 *            if in min and max limit
+	 * @param r3
+	 *            if in max limit
 	 * @return r1 or r2 or r3
 	 */
 	public static int checkRule(int min, int max, int i, int r1, int r2, int r3) {
-		if (i <= min) return r1;
-		else if (i > min && i < max) return r3;
-		else if (i >= max) return r3;
+		if (i <= min)
+			return r1;
+		else if (i > min && i < max)
+			return r3;
+		else if (i >= max)
+			return r3;
 		return 0;
 	}
 
