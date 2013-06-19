@@ -18,11 +18,20 @@
 			<groupId>com.sleepycat</groupId>
 			<version>5.0.73</version>
 		</dependency>
+		<dependency>
+			<groupId>com.google.code.jmatharray</groupId>
+			<artifactId>jmatharray</artifactId>
+			<version>2009.07.25</version>
+		</dependency>
 	</dependencies>
+
 	<repositories>
 		<repository>
+			<id>trac.clermont.cemagref.fr.nexus</id>
+			<url>http://trac.clermont.cemagref.fr/nexus/content/groups/public</url>
+		</repository>
+		<repository>
 			<id>oracleReleases</id>
-			<name>Oracle Released Java Packages</name>
 			<url>http://download.oracle.com/maven</url>
 			<layout>default</layout>
 		</repository>

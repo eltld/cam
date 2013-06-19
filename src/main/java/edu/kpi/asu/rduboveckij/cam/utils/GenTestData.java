@@ -7,25 +7,25 @@ import java.io.File;
 import android.util.Log;
 
 import edu.kpi.asu.rduboveckij.cam.CAMImpl;
-import edu.kpi.asu.rduboveckij.cam.db.LogTime;
-import edu.kpi.asu.rduboveckij.cam.db.LogTimeDA;
-import edu.kpi.asu.rduboveckij.cam.db.Precedent;
-import edu.kpi.asu.rduboveckij.cam.db.PrecedentDA;
+import edu.kpi.asu.rduboveckij.cam.domain.LogTime;
+import edu.kpi.asu.rduboveckij.cam.domain.Precedent;
+import edu.kpi.asu.rduboveckij.cam.repository.LogTimeDAO;
+import edu.kpi.asu.rduboveckij.cam.repository.PrecedentDAO;
 
 public class GenTestData {
-	private PrecedentDA prDa;
-	private LogTimeDA ltDa;
+	private PrecedentDAO prDa;
+	private LogTimeDAO ltDa;
 
 	public GenTestData() {
 		DatabaseConfig.init(CAMImpl.pathDb);
-		prDa = new PrecedentDA();
-		ltDa = new LogTimeDA();
+		prDa = new PrecedentDAO();
+		ltDa = new LogTimeDAO();
 	}
 
 	public GenTestData(File path) {
 		DatabaseConfig.init(path);
-		prDa = new PrecedentDA();
-		ltDa = new LogTimeDA();
+		prDa = new PrecedentDAO();
+		ltDa = new LogTimeDAO();
 	}
 
 	/**
@@ -96,7 +96,7 @@ public class GenTestData {
 	public static int checkRule(int min, int max, int i, int r1, int r2, int r3) {
 		if (i <= min)
 			return r1;
-		else if (i > min && i < max)
+		else if (i > min && i > max)
 			return r3;
 		else if (i >= max)
 			return r3;

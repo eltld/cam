@@ -7,14 +7,14 @@ import java.util.Collection;
 
 import android.app.Activity;
 import android.util.Log;
-import edu.kpi.asu.rduboveckij.cam.db.LogTime;
-import edu.kpi.asu.rduboveckij.cam.db.LogTimeDA;
-import edu.kpi.asu.rduboveckij.cam.db.Precedent;
-import edu.kpi.asu.rduboveckij.cam.db.PrecedentDA;
-import edu.kpi.asu.rduboveckij.cam.math.KSuspendedNeighborhoods;
+import edu.kpi.asu.rduboveckij.cam.domain.LogTime;
+import edu.kpi.asu.rduboveckij.cam.domain.Precedent;
 import edu.kpi.asu.rduboveckij.cam.math.Tukey;
-import edu.kpi.asu.rduboveckij.cam.osmonitor.IOsMonitorAPI;
-import edu.kpi.asu.rduboveckij.cam.osmonitor.OsMonitorAPI;
+import edu.kpi.asu.rduboveckij.cam.math.kneighbordhoods.Neighbordhoods;
+import edu.kpi.asu.rduboveckij.cam.math.kneighbordhoods.KSuspendedNeighborhoods;
+import edu.kpi.asu.rduboveckij.cam.osmonitor.OsMonitorImpl;
+import edu.kpi.asu.rduboveckij.cam.repository.LogTimeDAO;
+import edu.kpi.asu.rduboveckij.cam.repository.PrecedentDAO;
 import edu.kpi.asu.rduboveckij.cam.utils.CommonUtils;
 import edu.kpi.asu.rduboveckij.cam.utils.DatabaseConfig;
 
@@ -25,6 +25,8 @@ public class CAMImpl implements CAM, Serializable {
 			android.os.Environment.getExternalStorageDirectory(), "CAM");
 	private double maxWaitTime = 1.5;
 
+	public Neighbordhoods kneighbordhoods = new KSuspendedNeighborhoods();
+
 	private double[] logTimes;
 	private Collection<Precedent> precedents;
 
@@ -34,17 +36,18 @@ public class CAMImpl implements CAM, Serializable {
 		asyncLoad();
 	}
 
-	public CAMImpl(double maxWaitTime) {
+	public CAMImpl(double maxWaitTime, Neighbordhoods kneighbordhoods) {
 		super();
 		this.maxWaitTime = maxWaitTime;
+		this.kneighbordhoods = kneighbordhoods;
 		asyncLoad();
 	}
 
 	public void asyncLoad() {
 		final long calcstart = System.nanoTime();
 		DatabaseConfig.init(pathDb);
-		logTimes = new LogTimeDA().getLogTimes();
-		precedents = new PrecedentDA().findAll().values();
+		logTimes = new LogTimeDAO().getLogTimes();
+		precedents = new PrecedentDAO().findAll().values();
 		Log.i("CAM->initEnd", "" + (System.nanoTime() - calcstart)
 				/ CommonUtils.NanoToSecond);
 	}
@@ -54,12 +57,10 @@ public class CAMImpl implements CAM, Serializable {
 
 		final long calcstart = System.nanoTime();
 		double avg = Tukey.apply(logTimes);
-		if (avg > maxWaitTime) {
+		if (avg < maxWaitTime) {
 			// android.os.Debug.startMethodTracing();
-			IOsMonitorAPI monitor = new OsMonitorAPI(activity);
-			double[] state = CommonUtils.newArray(monitor.getCPULoad(),
-					monitor.getMemoryLoad(), monitor.getEnergyLevel());
-			double ksn = new KSuspendedNeighborhoods().apply(precedents, state);
+			double[] state = CommonUtils.getState(new OsMonitorImpl(activity));
+			double ksn = kneighbordhoods.apply(precedents, state);
 			onclient = Math.round(ksn) == 1;
 			// android.os.Debug.stopMethodTracing();
 			Log.i("CAM->State", "" + state[0] + "," + state[1] + "," + state[2]);
@@ -81,7 +82,7 @@ public class CAMImpl implements CAM, Serializable {
 	public void saveLogTime(double time) {
 		Log.i("CAM->saveLogTime", "" + time);
 		if (time < 10) {
-			new LogTimeDA().save(new LogTime(time));
+			new LogTimeDAO().save(new LogTime(time));
 			final int len = logTimes.length;
 			logTimes = Arrays.copyOf(logTimes, len + 1);
 			logTimes[len] = time;
@@ -90,12 +91,12 @@ public class CAMImpl implements CAM, Serializable {
 
 	public void printLogTime() {
 		DatabaseConfig.init(pathDb);
-		CommonUtils.printFor(new LogTimeDA().findAll().values());
+		CommonUtils.printFor(new LogTimeDAO().findAll().values());
 	}
 
 	public void printPrecedent() {
 		DatabaseConfig.init(pathDb);
-		CommonUtils.printFor(new PrecedentDA().findAll().values());
+		CommonUtils.printFor(new PrecedentDAO().findAll().values());
 	}
 
 	public double getMaxWaitTime() {
@@ -132,8 +133,9 @@ public class CAMImpl implements CAM, Serializable {
 
 	@Override
 	public String toString() {
-		return "CAMImpl [maxWaitTime=" + maxWaitTime + ", logTimes="
-				+ Arrays.toString(logTimes) + ", precedents=" + precedents
-				+ ", start_time=" + start_time + "]";
+		return "CAMImpl [maxWaitTime=" + maxWaitTime + ", kneighbordhoods="
+				+ kneighbordhoods + ", logTimes=" + Arrays.toString(logTimes)
+				+ ", precedents=" + precedents + ", start_time=" + start_time
+				+ "]";
 	}
 }

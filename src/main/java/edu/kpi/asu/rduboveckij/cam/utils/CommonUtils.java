@@ -3,11 +3,14 @@ package edu.kpi.asu.rduboveckij.cam.utils;
 import java.util.Collection;
 
 import android.util.Log;
+import edu.kpi.asu.rduboveckij.cam.osmonitor.OsMonitor;
 
 public class CommonUtils {
 	public static final double NanoToSecond = 1000000000.0;
+
 	/**
-	 * Pow with default param 
+	 * Pow with default param
+	 * 
 	 * @param x
 	 * @return Math.pow(x, 2)
 	 */
@@ -16,7 +19,19 @@ public class CommonUtils {
 	}
 	
 	/**
+	 * Need for create double array with state device
+	 * 
+	 * @param OsMonitor
+	 * @return array
+	 */
+	public static double[] getState(OsMonitor monitor) {
+		return CommonUtils.newArray(monitor.getCPULoad(),
+				monitor.getMemoryLoad(), monitor.getEnergyLevel());
+	}
+
+	/**
 	 * Need for create array not use new double[]{1,2,3,...}
+	 * 
 	 * @param array
 	 * @return array
 	 */
