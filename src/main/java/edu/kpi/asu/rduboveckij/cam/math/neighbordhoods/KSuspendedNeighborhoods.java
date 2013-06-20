@@ -1,4 +1,4 @@
-package edu.kpi.asu.rduboveckij.cam.math.kneighbordhoods;
+package edu.kpi.asu.rduboveckij.cam.math.neighbordhoods;
 
 import static edu.kpi.asu.rduboveckij.cam.utils.CommonUtils.sqr;
 

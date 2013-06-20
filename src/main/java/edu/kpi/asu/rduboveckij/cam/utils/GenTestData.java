@@ -64,7 +64,7 @@ public class GenTestData {
 				int resultM = checkRule(70, 90, im, 1, randomBool() * 2, -2);
 				for (int ie : Range.range(0, 100, stepE)) {
 					int result = resultM + resultC
-							+ checkRule(25, 75, ie, -3, randomBool(), 1);
+							+ checkRule(20, 70, ie, -3, randomBool(), 1);
 					Precedent pr = new Precedent(result >= 0 ? 1.0 : 0.0,
 							ic / 100.0, im / 100.0, ie / 100.0);
 					prDa.save(pr);
