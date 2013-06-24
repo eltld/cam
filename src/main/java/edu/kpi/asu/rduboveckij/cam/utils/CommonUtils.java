@@ -1,12 +1,19 @@
 package edu.kpi.asu.rduboveckij.cam.utils;
 
+import java.io.File;
 import java.util.Collection;
+import java.util.Date;
 
 import android.util.Log;
 import edu.kpi.asu.rduboveckij.cam.osmonitor.OsMonitor;
 
 public class CommonUtils {
 	public static final double NanoToSecond = 1000000000.0;
+	public static final long MEGABYTE = 1048576L;
+	// 1970 01 08
+	public static final Date DATE_MINVALUE = new Date(609075864L);
+	public static final File DB_DIR = android.os.Environment
+			.getExternalStorageDirectory();
 
 	/**
 	 * Pow with default param
@@ -17,14 +24,15 @@ public class CommonUtils {
 	public static double sqr(final double x) {
 		return Math.pow(x, 2);
 	}
-	
+
 	/**
 	 * Need for create double array with state device
 	 * 
 	 * @param OsMonitor
 	 * @return array
+	 * @throws Exception
 	 */
-	public static double[] getState(OsMonitor monitor) {
+	public static double[] getState(OsMonitor monitor) throws Exception {
 		return CommonUtils.newArray(monitor.getCPULoad(),
 				monitor.getMemoryLoad(), monitor.getEnergyLevel());
 	}
@@ -51,8 +59,19 @@ public class CommonUtils {
 	 * 
 	 * @param collection
 	 */
-	public static <T> void printFor(Collection<T> col) {
+	public static <T> void printFor(final Collection<T> col) {
 		for (T t : col)
 			Log.i("CAM->print", t.toString());
 	}
+
+	/**
+	 * 
+	 * 
+	 * @param start_time
+	 * @return get elapsed time
+	 */
+	public static double getElapsed(final long start_time) {
+		return (System.nanoTime() - start_time) / NanoToSecond;
+	}
+
 }

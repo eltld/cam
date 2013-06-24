@@ -1,9 +1,15 @@
 package edu.kpi.asu.rduboveckij.cam;
 
-import android.app.Activity;
+import java.io.File;
+import java.io.Serializable;
 
-public interface CAM {
-	public boolean isOnClient(Activity activity);
-	
+import android.app.Activity;
+import edu.kpi.asu.rduboveckij.cam.utils.CommonUtils;
+
+public interface CAM extends Serializable{
+	public static final File pathDb = new File(CommonUtils.DB_DIR, "CAM");
+
+	public boolean onClient(Activity activity);
+
 	public void saveCurrentLogTime();
 }

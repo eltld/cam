@@ -1,7 +1,6 @@
 package edu.kpi.asu.rduboveckij.cam;
 
 import java.io.File;
-import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Collection;
 
@@ -18,11 +17,10 @@ import edu.kpi.asu.rduboveckij.cam.repository.PrecedentDAO;
 import edu.kpi.asu.rduboveckij.cam.utils.CommonUtils;
 import edu.kpi.asu.rduboveckij.cam.utils.DatabaseConfig;
 
-public class CAMImpl implements CAM, Serializable {
+public class CAMImpl implements CAM {
 	private static final long serialVersionUID = 2332321026448536396L;
+	private static final int MaxLogTime = 10;
 
-	public static File pathDb = new File(
-			android.os.Environment.getExternalStorageDirectory(), "CAM");
 	private double maxWaitTime = 1.5;
 
 	public Neighbordhoods kneighbordhoods = new KSuspendedNeighborhoods();
@@ -33,55 +31,56 @@ public class CAMImpl implements CAM, Serializable {
 	private long start_time;
 
 	public CAMImpl() {
-		asyncLoad();
+		asyncLoad(CAM.pathDb);
+	}
+
+	public CAMImpl(File db, Neighbordhoods kneighbordhoods) {
+		this.kneighbordhoods = kneighbordhoods;
+		asyncLoad(db);
 	}
 
 	public CAMImpl(double maxWaitTime, Neighbordhoods kneighbordhoods) {
 		super();
 		this.maxWaitTime = maxWaitTime;
 		this.kneighbordhoods = kneighbordhoods;
-		asyncLoad();
+		asyncLoad(CAM.pathDb);
 	}
 
-	public void asyncLoad() {
-		final long calcstart = System.nanoTime();
-		DatabaseConfig.init(pathDb);
+	public void asyncLoad(File db) {
+		DatabaseConfig.init(db);
 		logTimes = new LogTimeDAO().getLogTimes();
 		precedents = new PrecedentDAO().findAll().values();
-		Log.i("CAM->initEnd", "" + (System.nanoTime() - calcstart)
-				/ CommonUtils.NanoToSecond);
 	}
 
-	public boolean isOnClient(Activity activity) {
-		boolean onclient = true;
-
+	public boolean onClient(final Activity activity) {
 		final long calcstart = System.nanoTime();
-		double avg = Tukey.apply(logTimes);
-		if (avg < maxWaitTime) {
-			// android.os.Debug.startMethodTracing();
-			double[] state = CommonUtils.getState(new OsMonitorImpl(activity));
-			double ksn = kneighbordhoods.apply(precedents, state);
-			onclient = Math.round(ksn) == 1;
-			// android.os.Debug.stopMethodTracing();
-			Log.i("CAM->State", "" + state[0] + "," + state[1] + "," + state[2]);
-			Log.i("CAM->KSN", "" + ksn);
+		try {
+			return onClientState(CommonUtils.getState(new OsMonitorImpl(
+					activity)));
+		} catch (Exception e) {
+			e.printStackTrace();
+			return true;
+		} finally {
+			this.start_time = System.nanoTime();
+			Log.i("CAM->CalcEnd", "" + CommonUtils.getElapsed(calcstart));
 		}
-		this.start_time = System.nanoTime();
-		Log.i("CAM->CalcEnd", "" + (System.nanoTime() - calcstart)
-				/ CommonUtils.NanoToSecond);
-		Log.i("CAM->Tukey", "" + avg);
-		Log.i("CAM", "logic need calc on" + (onclient ? "client " : "server"));
+	}
+
+	public boolean onClientState(final double[] state) {
+		boolean onclient = true;
+		if (Tukey.apply(logTimes) < maxWaitTime) {
+			onclient = Math.round(kneighbordhoods.apply(precedents, state)) == 1;
+		}
 		return onclient;
 	}
 
 	public void saveCurrentLogTime() {
-		this.saveLogTime((System.nanoTime() - this.start_time)
-				/ CommonUtils.NanoToSecond);
+		this.saveLogTime(CommonUtils.getElapsed(this.start_time));
 	}
 
-	public void saveLogTime(double time) {
+	public void saveLogTime(final double time) {
 		Log.i("CAM->saveLogTime", "" + time);
-		if (time < 10) {
+		if (time < MaxLogTime) {
 			new LogTimeDAO().save(new LogTime(time));
 			final int len = logTimes.length;
 			logTimes = Arrays.copyOf(logTimes, len + 1);
@@ -90,12 +89,12 @@ public class CAMImpl implements CAM, Serializable {
 	}
 
 	public void printLogTime() {
-		DatabaseConfig.init(pathDb);
+		DatabaseConfig.init(CAM.pathDb);
 		CommonUtils.printFor(new LogTimeDAO().findAll().values());
 	}
 
 	public void printPrecedent() {
-		DatabaseConfig.init(pathDb);
+		DatabaseConfig.init(CAM.pathDb);
 		CommonUtils.printFor(new PrecedentDAO().findAll().values());
 	}
 

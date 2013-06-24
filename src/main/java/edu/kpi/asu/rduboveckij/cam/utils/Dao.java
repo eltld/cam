@@ -8,7 +8,9 @@ import com.sleepycat.persist.PrimaryIndex;
 
 /**
  * Use Data Access Object pattern
- * @param <T> extends DomeinWithId<Long>
+ * 
+ * @param <T>
+ *            extends DomeinWithId<Long>
  */
 public abstract class Dao<T extends DomeinWithId<Long>> {
 	private PrimaryIndex<Long, T> index;
@@ -25,7 +27,9 @@ public abstract class Dao<T extends DomeinWithId<Long>> {
 
 	/**
 	 * Save many items
-	 * @param items extends DomeinWithId<Long>
+	 * 
+	 * @param items
+	 *            extends DomeinWithId<Long>
 	 */
 	public void saveAll(T... items) {
 		for (T item : items)
@@ -34,8 +38,11 @@ public abstract class Dao<T extends DomeinWithId<Long>> {
 
 	/**
 	 * Save one item
-	 * @param item extends DomeinWithId<Long>
-	 * @param sequence_name need for auto_incremant
+	 * 
+	 * @param item
+	 *            extends DomeinWithId<Long>
+	 * @param sequence_name
+	 *            need for auto_incremant
 	 */
 	protected void save(T item, String sequence_name) {
 		Transaction tx = dbConfig.startTransaction();
@@ -58,6 +65,7 @@ public abstract class Dao<T extends DomeinWithId<Long>> {
 
 	/**
 	 * Find one
+	 * 
 	 * @param id
 	 * @return Item
 	 */
@@ -67,6 +75,7 @@ public abstract class Dao<T extends DomeinWithId<Long>> {
 
 	/**
 	 * Find All
+	 * 
 	 * @return Map Items with id
 	 */
 	public Map<Long, T> findAll() {
@@ -74,7 +83,16 @@ public abstract class Dao<T extends DomeinWithId<Long>> {
 	}
 
 	/**
+	 * Remove All
+	 */
+	public void removeAll() {
+		for (T t : findAll().values())
+			remove(t.getId());
+	}
+
+	/**
 	 * Remove one Items
+	 * 
 	 * @param id
 	 */
 	public void remove(Long id) {
@@ -82,7 +100,6 @@ public abstract class Dao<T extends DomeinWithId<Long>> {
 			index.delete(id);
 		} catch (DatabaseException e) {
 			e.printStackTrace();
-			index.delete(id);
 		}
 	}
 }

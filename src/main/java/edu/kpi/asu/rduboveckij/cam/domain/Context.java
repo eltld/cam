@@ -13,7 +13,7 @@ public class Context implements DomeinWithId<Long> {
 
 	@PrimaryKey(sequence = Sequence_Name)
 	private long id;
-	private int platform;
+	private int platform = 0;
 	private Date date;
 
 	public Context() {
