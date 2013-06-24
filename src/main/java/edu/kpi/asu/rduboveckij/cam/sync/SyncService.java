@@ -15,7 +15,9 @@ public class SyncService extends Service {
 	}
 
 	public int onStartCommand(Intent intent, int flags, int startId) {
-		syncAdapter.sync(intent.getStringExtra(EXTRA_HOST));
+		final String host = intent.getStringExtra(EXTRA_HOST);
+		if (host != null)
+			syncAdapter.sync(host);
 		return super.onStartCommand(intent, flags, startId);
 	}
 
